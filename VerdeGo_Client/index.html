@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VerdeGo - Frutas y Verduras Frescas</title>
+  
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&enable-funding=venmo"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="bg-light">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
+    <div class="container">
+      
+      <button class="btn border-0 text-success btn-nav-hover me-2" type="button" 
+              data-bs-toggle="offcanvas" data-bs-target="#menuDrawer" 
+              aria-label="Abrir menú de navegación">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      
+      <a class="navbar-brand d-flex align-items-center gap-2 me-4" href="#">
+        <img src="/imagenes/logo.png" alt="Logotipo de VerdeGo" width="45">
+        <span class="fw-bold fs-3 text-success" style="letter-spacing: -1px;">VerdeGo</span>
+      </a>
+
+      <div class="flex-grow-1 mx-3 d-none d-md-block">
+        <div class="input-group">
+          <label for="search-input" class="visually-hidden">Buscar productos</label>
+          <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input type="text" id="search-input" class="form-control bg-light border-start-0 rounded-end-pill py-2" placeholder="Buscar productos frescos...">
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center ms-2 gap-3">
+        <button class="btn border-0 text-success btn-nav-hover position-relative p-2" 
+              data-bs-toggle="offcanvas" data-bs-target="#cartDrawer">
+            <i class="bi bi-cart3 fs-4"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-white">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="py-5 bg-white border-bottom">
+    <div class="container py-lg-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6 order-2 order-lg-1">
+          <div class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 mb-3">
+            Fresco · Local · Sostenible
+          </div>
+          <h1 class="display-3 fw-bold text-verdego-dark mb-4">
+            Frutas y verduras frescas a un clic
+          </h1>
+          <p class="lead text-secondary mb-5">
+            Productos locales cultivados con amor y respeto por el medio ambiente. 
+            De la huerta a tu mesa en menos de 24 horas.
+          </p>
+          <div class="d-grid d-sm-flex gap-3">
+            <a href="/productos.html" class="btn btn-verdego btn-lg px-5 py-3 rounded-4 shadow text-decoration-none">
+                Comprar ahora
+            </a>
+            
+            <a href="#destacados-scroll" class="btn btn-outline-success btn-lg px-5 py-3 rounded-4 text-decoration-none">
+                Ver destacados
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-6 order-1 order-lg-2">
+          <div class="position-relative">
+            <img src="https://images.unsplash.com/photo-1748968218227-0d1951551255?q=80&w=1080" 
+                 class="img-fluid rounded-5 shadow-lg" alt="Cesta variada de frutas y verduras frescas">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container py-5" id="destacados-scroll">
+    <h2 class="fw-bold text-verdego-medium mb-4 text-start">Productos destacados</h2>
+    
+    <div id="destacados-container" class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <div class="offcanvas offcanvas-start border-0 shadow-lg" tabindex="-1" id="menuDrawer" style="width: 320px;">
+    <div class="offcanvas-header p-4 border-bottom" style="background-color: #e6f4ec;">
+      <h3 class="offcanvas-title fw-bold h5" style="color: #0b4d2d;">Menú</h3>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div id="drawer-user-area" class="p-4 border-bottom" style="background-color: #f6f9f7;"></div>
+        <div class="p-3"></div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end rounded-start-4 border-0 shadow-lg" tabindex="-1" id="cartDrawer" aria-labelledby="cartLabel" style="width: 480px;">
+    <div class="offcanvas-header border-bottom p-4">
+        <h5 class="offcanvas-title text-verdego-dark fw-bold fs-4" id="cartLabel">Tu carrito</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0 d-flex flex-column bg-white">
+        <div id="cart-items-container" class="flex-grow-1 p-4 overflow-auto custom-scrollbar"></div>
+        </div>
+  </div>
+
+  <div id="main-footer"></div>
+    
+  <div class="modal fade" id="genericModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-5 shadow-lg overflow-hidden">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <div id="modal-icon-bg" class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px;">
+                        <i id="modal-icon" class="bi" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold mb-3 text-verdego-dark" id="modal-title">Título</h2>
+                <p class="text-secondary mb-4 fs-6" id="modal-message">Mensaje...</p>
+                <div class="d-flex flex-column gap-2">
+                    <button type="button" id="modal-btn-action" class="btn btn-lg rounded-4 py-3 text-white fw-bold shadow-sm w-100">Continuar</button>
+                    <button type="button" id="modal-btn-cancel" class="btn btn-lg rounded-4 py-3 text-secondary fw-bold bg-light w-100 d-none" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h4 class="modal-title fw-bold text-verdego-dark">Finalizar Compra</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <form id="checkout-form">
+                            <h6 class="text-success mb-3 fw-bold"><i class="bi bi-geo-alt-fill me-2"></i>Dirección de Envío</h6>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">Selecciona una dirección</label>
+                                <select id="co-direccion-select" class="form-select form-select-lg bg-light border-0">
+                                    <option value="nueva">+ Nueva Dirección</option>
+                                </select>
+                            </div>
+
+                            <div id="co-nueva-direccion" class="">
+                                <div class="row g-2 mb-3">
+                                    <div class="col-12"><input type="text" class="form-control" id="co-direccion" placeholder="Calle y número"></div>
+                                    <div class="col-md-6"><input type="text" class="form-control" id="co-ciudad" placeholder="Ciudad"></div>
+                                    <div class="col-md-3"><input type="text" class="form-control" id="co-cp" placeholder="CP"></div>
+                                    <div class="col-md-3"><input type="text" class="form-control" id="co-pais" value="España" readonly></div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-success mb-3 fw-bold mt-4"><i class="bi bi-basket-fill me-2"></i>Resumen del Pedido</h6>
+                            <div class="bg-light p-3 rounded-3" id="co-lista-resumen" style="max-height: 150px; overflow-y: auto;">
+                                </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="bg-light p-4 rounded-4 h-100 d-flex flex-column">
+                            <h6 class="fw-bold mb-3">Total a Pagar</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="display-6 fw-bold text-verdego-dark" id="co-total-display">0.00€</span>
+                            </div>
+                            
+                            <hr class="text-secondary opacity-25 mb-4">
+                            
+                            <p class="small text-muted mb-2">Selecciona método de pago:</p>
+                            
+                            <div id="paypal-checkout-container" style="min-height: 150px;"></div>
+                            
+                            <div class="text-center mt-3">
+                                <small class="text-muted" style="font-size: 0.7rem;">
+                                    <i class="bi bi-lock-fill"></i> Pago 100% seguro y encriptado.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/js/authNavbar.js"></script>
+  <script type="module" src="/src/js/footerManager.js"></script>
+  <script type="module" src="/src/js/cart.js"></script>
+  <script type="module" src="/src/js/index.js"></script>
+  
+</body>
+</html>

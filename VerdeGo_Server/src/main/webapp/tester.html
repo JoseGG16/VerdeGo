@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tester VerdeGo</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        button { cursor: pointer; padding: 10px 20px; background: #28a745; color: white; border: none; }
+        #resultado { background: #f4f4f4; padding: 10px; border-left: 5px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>🌿 Probador de API VerdeGo</h1>
+    
+    <div class="box">
+        <h3>Probar Login</h3>
+        <input type="text" id="email" placeholder="Email (ej: juan@cliente.com)" value="juan@cliente.com"><br><br>
+        <input type="text" id="pass" placeholder="Password" value="1234"><br><br>
+        <button onclick="hacerLogin()">⚡ Enviar Login a Java</button>
+    </div>
+
+    <h3>Respuesta del Servidor:</h3>
+    <pre id="resultado">Esperando...</pre>
+
+    <script>
+        function hacerLogin() {
+            var email = document.getElementById("email").value;
+            var pass = document.getElementById("pass").value;
+
+            // Creamos el JSON igual que lo hará tu app final
+            var objetoUsuario = {
+                email: email,
+                password: pass
+            };
+
+            fetch('api/usuarios/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(objetoUsuario)
+            })
+            .then(response => response.text()) // Leemos la respuesta como texto
+            .then(data => {
+                // Mostramos lo que nos responde Java
+                document.getElementById("resultado").innerHTML = JSON.stringify(JSON.parse(data), null, 2);
+            })
+            .catch(error => {
+                document.getElementById("resultado").innerHTML = "❌ Error: " + error;
+            });
+        }
+    </script>
+</body>
+</html>

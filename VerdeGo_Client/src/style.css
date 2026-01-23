@@ -1,0 +1,298 @@
+/* =========================================
+   1. VARIABLES Y GENERALES
+   ========================================= */
+:root {
+  --verdego-dark: #0b4d2d;
+  --verdego-medium: #167a4b;
+  --verdego-light: #e6f4ec;
+  --verdego-text: #5a7a6a;
+  --verdego-icon: #8ca899;
+  --bg-gray: #f6f9f7;
+  --border-color: #d1e0d7;
+  --font-weight-medium: 500;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* =========================================
+   2. SECCIÓN VISUAL (IZQUIERDA)
+   ========================================= */
+.visual-side {
+  background: linear-gradient(135deg, var(--verdego-dark), var(--verdego-medium), var(--verdego-dark));
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+
+.bg-image {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url('/imagenes/fondo-login.jpg'); 
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+}
+
+/* =========================================
+   3. FORMULARIO E INPUTS
+   ========================================= */
+.input-wrapper { 
+    position: relative; 
+    margin-bottom: 5px; 
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 14px; 
+  color: var(--verdego-icon);
+  pointer-events: none;
+  font-size: 1.1rem;
+  z-index: 5;
+}
+
+.form-control-custom {
+  background-color: var(--bg-gray);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem 0.75rem 3rem; 
+  color: var(--verdego-dark);
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  min-height: 48px; /* Altura base del input */
+}
+
+.form-control-custom:focus {
+  background-color: #fff;
+  border-color: var(--verdego-medium);
+  box-shadow: 0 0 0 3px rgba(22, 122, 75, 0.1);
+  outline: none;
+}
+
+/* --- SOLUCIÓN DEL OJO --- */
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 0;           
+  height: 48px;     
+  display: flex;    
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--verdego-text);
+  cursor: pointer;
+  padding: 0 10px;
+  z-index: 10;
+}
+
+.password-toggle:hover {
+  color: var(--verdego-medium);
+}
+
+/* =========================================
+   4. VALIDACIONES Y ERRORES
+   ========================================= */
+
+.invalid-feedback {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    margin-left: 4px;
+    display: none; 
+    color: #dc3545;
+}
+
+.form-control.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545 !important;
+    background-image: none !important; 
+    padding-right: 1rem !important; 
+}
+
+input[type="password"].is-invalid, 
+input[type="text"].is-invalid { 
+    padding-right: 3rem !important;
+}
+
+.form-control.is-valid {
+    border-color: var(--verdego-medium) !important;
+    background-image: none !important;
+}
+
+/* =========================================
+   5. BOTONES
+   ========================================= */
+.btn-verdego {
+  background-color: var(--verdego-medium);
+  border-color: var(--verdego-medium);
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-verdego:hover {
+  background-color: var(--verdego-dark);
+  border-color: var(--verdego-dark);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.text-verdego-dark { color: var(--verdego-dark) !important; }
+.text-verdego-medium { color: var(--verdego-medium) !important; }
+
+.btn-guest {
+    background-color: white;
+    border: 2px solid var(--border-color); 
+    color: var(--verdego-medium);
+    border-radius: 0.75rem; 
+    padding: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-guest:hover {
+    background-color: var(--bg-gray); 
+    border-color: var(--verdego-medium); 
+    color: var(--verdego-dark);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+    transform: translateY(-1px);
+}
+
+.btn-guest:active {
+    transform: scale(0.98); 
+}
+
+/* =========================================
+   7. ESTILOS DEL CARRITO
+   ========================================= */
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--verdego-medium); }
+
+/* Cajas de promociones */
+.cart-promo-box {
+    background: linear-gradient(135deg, #e6f4ec 0%, #f6f9f7 100%);
+    border: 1px solid rgba(22, 122, 75, 0.2);
+}
+
+/* Item del carrito */
+.cart-item {
+    background-color: #f6f9f7;
+    border-radius: 0.75rem; 
+    transition: all 0.2s;
+}
+
+.cart-item:hover {
+    background-color: #ecf3f0;
+}
+
+/* Botones de cantidad */
+.btn-qty {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: var(--verdego-medium);
+    transition: all 0.2s;
+}
+
+.btn-qty:hover {
+    background-color: var(--verdego-light);
+    border-color: var(--verdego-medium);
+}
+
+/* Imagen del producto en carrito */
+.cart-img-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: white;
+}
+
+/* Estilos para los Filtros de Categoría */
+.btn-filter {
+    border: 1px solid #e5e7eb; 
+    background-color: white;
+    color: #374151; 
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-filter:hover {
+    background-color: #e6f4ec !important; 
+    color: #167a4b !important; 
+    border-color: #167a4b;
+}
+
+.btn-filter-active {
+    background-color: #167a4b !important; 
+    color: white !important;
+    border-color: #167a4b !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   8. TARJETAS DE PRODUCTO (NUEVO)
+   ========================================= */
+
+.product-card {
+    background-color: white;
+    border: none; /* Quitamos el borde por defecto de Bootstrap */
+    border-radius: 1rem; /* Equivalente a rounded-2xl */
+    /* shadow-sm de Tailwind */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+/* Efecto Hover: Sombra grande (shadow-xl) y pequeña elevación */
+.product-card:hover {
+    /* shadow-xl de Tailwind */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px); /* Pequeño movimiento hacia arriba */
+}
+
+/* Contenedor de la imagen para el recorte */
+.product-img-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    overflow: hidden;
+    background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+/* Imagen con transición de zoom */
+.product-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Al hacer hover en la tarjeta (.product-card), la imagen hace zoom */
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.05);
+}
