@@ -326,19 +326,37 @@ window.cartLogic = {
                     total: total,
                     puntosUsados: estado.puntosAplicados,
                     codigoDescuento: estado.cuponAplicado?.codigo,
-                    idCodigoDescuento: estado.cuponAplicado?1:null,
+                    idCodigoDescuento: estado.cuponAplicado?1:null, // Ojo: Aquí deberías poner el ID real si lo tienes en el objeto cupón
                     direccion: direccionEnvio, ciudad: ciudadEnvio, cp: cpEnvio, pais: "España",
                     idTransaccion: detallesPago.id, 
                     estadoPago: "PAGADO",
                     productos: estado.items.map(i => ({ id: i.id||i.idProducto, cantidad: i.cantidad, precio: i.price||i.precio }))
                 })
             });
+            
             const data = await res.json();
+            
             if(data.status === 'ok') {
+                // <---  ACTUALIZACIÓN DE PUNTOS ---
+                if (data.nuevosPuntos !== undefined) {
+                    console.log("Actualizando puntos locales a:", data.nuevosPuntos);
+                    usuario.puntosFidelizacion = data.nuevosPuntos;
+                    // Guardamos el usuario actualizado en el navegador
+                    localStorage.setItem("usuarioVerdeGo", JSON.stringify(usuario));
+                }
+                // ---------------------------------------
+
                 bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
-                showModal('success', '¡Pedido Pagado!', `Referencia PayPal: ${detallesPago.id}`, () => {
-                    estado.items=[]; estado.puntosAplicados=0; estado.cuponAplicado=null; guardarEstado(); 
-                    window.location.href="/pedidos.html";
+                
+                showModal('success', '¡Pedido Pagado!', `Has ganado puntos con esta compra. Referencia: ${detallesPago.id}`, () => {
+                    // Limpiamos carrito
+                    estado.items=[]; 
+                    estado.puntosAplicados=0; 
+                    estado.cuponAplicado=null; 
+                    guardarEstado(); 
+                    
+                    // Redirigimos a perfil para ver los puntos nuevos, o a pedidos
+                    window.location.href="/perfil.html"; 
                 });
             } else {
                 showModal('error', 'Error', 'Pago realizado pero error al guardar pedido.');
