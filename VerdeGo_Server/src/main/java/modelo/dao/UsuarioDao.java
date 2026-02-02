@@ -18,7 +18,7 @@ public class UsuarioDao {
      * Devuelve un objeto Cliente o Empleado según el rol.
      */
     public Usuario validarLogin(String email, String password) {
-    	Usuario usuario = null;
+        Usuario usuario = null;
         
         String sql = "SELECT u.*, r.nombre AS nombre_rol, r.descripcion " +
                      "FROM usuarios u " +
@@ -68,10 +68,6 @@ public class UsuarioDao {
         return usuario;
     }
 
-    /**
-     * Registra un usuario nuevo en dos pasos (Tabla usuarios + Tabla clientes).
-     * Usa transacción para asegurar integridad.
-     */
     public boolean registrarUsuario(Usuario usuario) {
         boolean registrado = false;
         Connection connection = null;
@@ -104,7 +100,7 @@ public class UsuarioDao {
                 if (rsKeys.next()) {
                     int idGenerado = rsKeys.getInt(1);
 
-                  
+                   
                     PreparedStatement psClient = connection.prepareStatement(sqlCliente);
                     psClient.setInt(1, idGenerado);
                     psClient.setInt(2, 0); 
@@ -164,9 +160,6 @@ public class UsuarioDao {
     public boolean vincularPaypal(int idUsuario, String emailPaypal) {
         boolean exito = false;
         
-        String sql = "UPDATE clientes SET paypal_email = ? WHERE id_cliente = (SELECT id_cliente FROM clientes WHERE id_cliente = ?)";
-        
-        
         try (Connection con = JdbcConnection.getConnection();
              PreparedStatement ps = con.prepareStatement("UPDATE clientes SET paypal_email = ? WHERE id_cliente = ?")) {
             
@@ -192,6 +185,29 @@ public class UsuarioDao {
             return false;
         }
     }
+
+    // ==========================================
+    //   <--- NUEVO: MÉTODO PARA OBTENER PUNTOS
+    // ==========================================
+    public int obtenerPuntosActuales(int idUsuario) {
+        int puntos = 0;
+        String sql = "SELECT puntos_fidelizacion FROM clientes WHERE id_cliente = ?";
+        
+        try (Connection con = JdbcConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                puntos = rs.getInt("puntos_fidelizacion");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return puntos;
+    }
+
     // ==========================================
     // MÉTODOS AUXILIARES PRIVADOS
     // ==========================================
@@ -209,8 +225,8 @@ public class UsuarioDao {
     }
 
     private void buscarDatosCliente(Connection con, Cliente cliente) throws SQLException {
-    		String sql = "SELECT puntos_fidelizacion, paypal_email FROM clientes WHERE id_cliente = ?";        
-    		try (PreparedStatement ps = con.prepareStatement(sql)) {
+        String sql = "SELECT puntos_fidelizacion, paypal_email FROM clientes WHERE id_cliente = ?";        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, cliente.getIdUsuario());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
