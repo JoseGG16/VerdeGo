@@ -69,7 +69,7 @@ body {
   color: var(--verdego-dark);
   font-weight: 500;
   transition: all 0.2s ease-in-out;
-  min-height: 48px; /* Altura base del input */
+  min-height: 48px; 
 }
 
 .form-control-custom:focus {
@@ -79,7 +79,6 @@ body {
   outline: none;
 }
 
-/* --- SOLUCIÓN DEL OJO --- */
 .password-toggle {
   position: absolute;
   right: 10px;
@@ -255,14 +254,13 @@ input[type="text"].is-invalid {
 }
 
 /* =========================================
-   8. TARJETAS DE PRODUCTO (NUEVO)
+   8. TARJETAS DE PRODUCTO 
    ========================================= */
 
 .product-card {
     background-color: white;
-    border: none; /* Quitamos el borde por defecto de Bootstrap */
-    border-radius: 1rem; /* Equivalente a rounded-2xl */
-    /* shadow-sm de Tailwind */
+    border: none;
+    border-radius: 1rem; 
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
@@ -270,18 +268,17 @@ input[type="text"].is-invalid {
 
 /* Efecto Hover: Sombra grande (shadow-xl) y pequeña elevación */
 .product-card:hover {
-    /* shadow-xl de Tailwind */
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transform: translateY(-2px); /* Pequeño movimiento hacia arriba */
+    transform: translateY(-2px);
 }
 
 /* Contenedor de la imagen para el recorte */
 .product-img-wrapper {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    aspect-ratio: 1 / 1; 
     overflow: hidden;
-    background-color: #f3f4f6; /* bg-gray-100 */
+    background-color: #f3f4f6; 
 }
 
 /* Imagen con transición de zoom */
@@ -295,4 +292,82 @@ input[type="text"].is-invalid {
 /* Al hacer hover en la tarjeta (.product-card), la imagen hace zoom */
 .product-card:hover .product-img-wrapper img {
     transform: scale(1.05);
+}
+
+/* =========================================
+   9. CORRECCIÓN MODALES (Z-INDEX)
+   ========================================= */
+/* Esto asegura que el modal de error salga POR ENCIMA del checkout */
+#genericModal {
+    z-index: 1070 !important; 
+}
+.modal-backdrop:nth-of-type(2) {
+    z-index: 1065 !important;
+}
+
+/* =========================================
+   10. ESTILOS MODAL CHECKOUT 
+   ========================================= */
+
+/* Hacemos la lista mucho más alta para que quepan más productos */
+#co-lista-resumen {
+    max-height: 400px !important; /* Antes era 150px */
+    overflow-y: auto;
+    background-color: #fff !important; /* Fondo blanco para limpieza */
+    border: 1px solid #e5e7eb;
+}
+
+/* Cada fila de producto */
+.checkout-item-row {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.2s;
+}
+
+.checkout-item-row:last-child {
+    border-bottom: none;
+}
+
+.checkout-item-row:hover {
+    background-color: #f9fafb;
+}
+
+/* Imagen del producto en el checkout */
+.checkout-img {
+    width: 64px;  /* Más grande */
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 1rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* Textos */
+.checkout-details {
+    flex-grow: 1;
+}
+
+.checkout-name {
+    font-weight: 700;
+    color: var(--verdego-dark);
+    font-size: 1rem;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.checkout-qty {
+    font-size: 0.9rem;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.checkout-price {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--verdego-medium);
 }
