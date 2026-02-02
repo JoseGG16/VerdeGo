@@ -10,12 +10,13 @@ import com.google.gson.Gson;
 
 import modelo.bean.CodigoDescuento;
 import modelo.dao.CodigoDescuentoDao;
-
+import modelo.dao.UsuarioDao; 
 
 import java.util.ArrayList;
 import java.util.List;
 import modelo.bean.*;
 import modelo.dao.PedidoDao;
+
 @Path("/pedidos")
 public class PedidoApi {
 
@@ -33,10 +34,10 @@ public class PedidoApi {
         if (cupon != null) {
             return gson.toJson(cupon);
         } else {
-            return "{\"error\": \"CupÛn no v·lido o expirado\"}";
+            return "{\"error\": \"Cup√≥n no v√°lido o expirado\"}";
         }
     }
-    	
+        
     @POST
     @Path("/finalizar")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -80,9 +81,20 @@ public class PedidoApi {
 
         boolean exito = dao.registrarPedido(p, detalles);
 
-        if (exito) return "{\"status\":\"ok\"}";
-        else return "{\"error\":\"Error al procesar el pedido\"}";
+        if (exito) {
+            // LOGICA PARA DEVOLVER PUNTOS ACTUALIZADOS ---
+            UsuarioDao usuarioDao = new UsuarioDao();
+            // Usamos el m√©todo que creamos en el paso anterior
+            int nuevosPuntos = usuarioDao.obtenerPuntosActuales(req.idCliente);
+            
+            // Devolvemos el status OK y los puntos nuevos
+            return "{\"status\":\"ok\", \"nuevosPuntos\":" + nuevosPuntos + "}";
+            // --------------------------------------------------------
+        } else {
+            return "{\"error\":\"Error al procesar el pedido\"}";
+        }
     }
+    
     private class PedidoRequest {
         int idCliente;
         double total;
