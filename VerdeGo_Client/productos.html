@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos - VerdeGo</title>
+    
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&enable-funding=venmo"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/src/style.css">
@@ -106,50 +109,70 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 shadow-lg">
-                <div class="modal-header border-0 p-4">
+                <div class="modal-header border-0 p-4 pb-0">
                     <h4 class="modal-title fw-bold text-verdego-dark">Finalizar Compra</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4 pt-0">
-                    <form id="checkout-form">
-                        <h6 class="text-success mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Dirección de Envío</h6>
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <input type="text" class="form-control" id="co-direccion" placeholder="Calle y número" required>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="co-ciudad" placeholder="Ciudad" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="co-cp" placeholder="CP" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="co-pais" value="España" readonly>
-                            </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <form id="checkout-form">
+                                <h6 class="text-success mb-3 fw-bold"><i class="bi bi-geo-alt-fill me-2"></i>Dirección de Envío</h6>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted">Selecciona una dirección</label>
+                                    <select id="co-direccion-select" class="form-select form-select-lg bg-light border-0">
+                                        <option value="nueva">+ Nueva Dirección</option>
+                                    </select>
+                                </div>
+
+                                <div id="co-nueva-direccion" class="">
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-12"><input type="text" class="form-control" id="co-direccion" placeholder="Calle y número"></div>
+                                        <div class="col-md-6"><input type="text" class="form-control" id="co-ciudad" placeholder="Ciudad"></div>
+                                        <div class="col-md-3"><input type="text" class="form-control" id="co-cp" placeholder="CP"></div>
+                                        <div class="col-md-3"><input type="text" class="form-control" id="co-pais" value="España" readonly></div>
+                                    </div>
+                                </div>
+
+                                <h6 class="text-success mb-3 fw-bold mt-4"><i class="bi bi-basket-fill me-2"></i>Resumen del Pedido</h6>
+                                <div class="bg-light p-3 rounded-3" id="co-lista-resumen" style="max-height: 150px; overflow-y: auto;">
+                                    </div>
+                            </form>
                         </div>
 
-                        <h6 class="text-success mb-3"><i class="bi bi-credit-card-2-front-fill me-2"></i>Resumen de Pago</h6>
-                        <div class="bg-light p-3 rounded-3 mb-4">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span>Total a pagar:</span>
-                                <span class="fw-bold fs-5 text-dark" id="co-total-display">0.00€</span>
+                        <div class="col-lg-5">
+                            <div class="bg-light p-4 rounded-4 h-100 d-flex flex-column">
+                                <h6 class="fw-bold mb-3">Total a Pagar</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <span class="display-6 fw-bold text-verdego-dark" id="co-total-display">0.00€</span>
+                                </div>
+                                
+                                <div id="co-puntos-info" class="mt-2"></div>
+                                
+                                <hr class="text-secondary opacity-25 mb-4">
+                                
+                                <p class="small text-muted mb-2">Selecciona método de pago:</p>
+                                
+                                <div id="paypal-checkout-container" style="min-height: 150px;"></div>
+                                
+                                <div class="text-center mt-3">
+                                    <small class="text-muted" style="font-size: 0.7rem;">
+                                        <i class="bi bi-lock-fill"></i> Pago 100% seguro y encriptado.
+                                    </small>
+                                </div>
                             </div>
-                            <small class="text-muted" id="co-puntos-info"></small>
                         </div>
-
-                        <div class="d-grid">
-                            <button type="button" class="btn btn-verdego py-3 fw-bold rounded-3 shadow-sm" onclick="window.cartLogic.confirmarPedidoBackend()">
-                                Confirmar y Pagar
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="/src/js/authNavbar.js"></script>
     <script type="module" src="/src/js/cart.js"></script>
