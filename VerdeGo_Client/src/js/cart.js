@@ -214,22 +214,73 @@ window.cartLogic = {
 
     prepararCheckout: async () => {
         const usuario = JSON.parse(localStorage.getItem("usuarioVerdeGo"));
-        if (!usuario) { showModal('info', 'Inicia sesión', 'Necesitas identificarte.', () => window.location.href = "/login.html"); return; }
+        
+        if (!usuario) { 
+            showModal('info', 'Inicia sesión', 'Necesitas identificarte.', () => window.location.href = "/login.html"); 
+            return; 
+        }
+
+        const idRol = usuario.rol ? usuario.rol.idRol : usuario.idRol;
+        if (idRol !== 2) {
+            showModal('error', 'Acceso restringido', 'Solo los clientes pueden hacer pedidos.');
+            return;
+        }
+
         if (estado.items.length === 0) return;
 
         const cartDrawer = document.getElementById('cartDrawer');
         if(cartDrawer) bootstrap.Offcanvas.getInstance(cartDrawer)?.hide();
-        const modal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+        
+        const modalEl = document.getElementById('checkoutModal');
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
 
         const subtotal = estado.items.reduce((s, i) => s + (i.price||i.precio)*i.cantidad, 0);
-        const desc = (estado.puntosAplicados>0?5:0) + (estado.cuponAplicado?estado.cuponAplicado.descuento:0);
+        const desc = (estado.puntosAplicados > 0 ? DESCUENTO_PUNTOS_FIJO : 0) + (estado.cuponAplicado ? estado.cuponAplicado.descuento : 0);
         const base = Math.max(0, subtotal - desc);
         const envio = base > 50 ? 0 : 4.99;
-        const totalFinal = (base * 1.10 + envio).toFixed(2);
+        const totalFinalString = (base * 1.10 + envio).toFixed(2);
+        const totalFinalNum = parseFloat(totalFinalString);
 
-        document.getElementById('co-total-display').textContent = totalFinal + "€";
+        const totalDisplay = document.getElementById('co-total-display');
+        if(totalDisplay) totalDisplay.textContent = totalFinalString + "€";
 
+     
+        const puntosGanados = Math.floor(totalFinalNum);
+        
+        let htmlPuntos = '<div class="pt-2 border-top border-secondary border-opacity-10 small">';
+
+        if (estado.puntosAplicados > 0) {
+            htmlPuntos += `
+                <div class="d-flex justify-content-between text-success mb-1">
+                    <span><i class="bi bi-gift-fill me-1"></i> Puntos usados (-${estado.puntosAplicados})</span>
+                    <span class="fw-bold">-${DESCUENTO_PUNTOS_FIJO.toFixed(2)}€</span>
+                </div>`;
+        }
+        if (estado.cuponAplicado) {
+            htmlPuntos += `
+                <div class="d-flex justify-content-between text-success mb-1">
+                    <span><i class="bi bi-tag-fill me-1"></i> Cupón (${estado.cuponAplicado.codigo})</span>
+                    <span class="fw-bold">-${estado.cuponAplicado.descuento.toFixed(2)}€</span>
+                </div>`;
+        }
+
+        htmlPuntos += `
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="text-muted">Ganarás con esta compra:</span>
+                <span class="badge bg-warning text-dark border border-warning rounded-pill">
+                    <i class="bi bi-star-fill text-white me-1"></i>+${puntosGanados} pts
+                </span>
+            </div>
+        </div>`;
+
+        const divInfoPuntos = document.getElementById('co-puntos-info');
+        if (divInfoPuntos) {
+            divInfoPuntos.innerHTML = htmlPuntos;
+        } else {
+            console.error("ERROR CRÍTICO: No encuentro el div 'co-puntos-info' en el HTML. Revisa el index.html/productos.html");
+        }
+       
         try {
             const res = await fetch(`http://localhost:8080/VerdeGo_Server/api/direcciones/listar?idUsuario=${usuario.idUsuario}`);
             const direcciones = await res.json();
@@ -250,49 +301,67 @@ window.cartLogic = {
             }
         } catch(e) { console.error(e); }
 
+        
+       
         const listaResumen = document.getElementById("co-lista-resumen");
-        if(listaResumen) listaResumen.innerHTML = estado.items.map(i => `<div class="d-flex justify-content-between small mb-1"><span>${i.cantidad}x ${i.name||i.nombre}</span><span class="fw-bold">${((i.price||i.precio)*i.cantidad).toFixed(2)}€</span></div>`).join('');
+        if(listaResumen) listaResumen.innerHTML = estado.items.map(i => {
+            const unidad = (i.unit || i.unidadMedida || '').toLowerCase();
+            const esKilo = unidad === 'kg';
+            
+            const cantidadTexto = esKilo 
+                ? `${i.cantidad.toFixed(2)} kg` 
+                : `${i.cantidad} ud${i.cantidad > 1 ? 's' : ''}`;
+
+            return `
+            <div class="checkout-item-row">
+                <img src="${i.image||i.imagenUrl||'https://via.placeholder.com/64'}" class="checkout-img" alt="${i.name||i.nombre}">
+                
+                <div class="checkout-details">
+                    <div class="checkout-name">${i.name||i.nombre}</div>
+                    <small class="checkout-qty">Cantidad: <strong>${cantidadTexto}</strong></small>
+                </div>
+                
+                <div class="checkout-price">
+                    ${((i.price||i.precio)*i.cantidad).toFixed(2)}€
+                </div>
+            </div>
+            `;
+        }).join('');
 
         const containerPayPal = document.getElementById("paypal-checkout-container");
         if(containerPayPal) {
             containerPayPal.innerHTML = ""; 
-            
             setTimeout(() => {
                 if(window.paypal) {
                     window.paypal.Buttons({
-                        style: {
-                            layout: 'vertical',
-                            color:  'gold', 
-                            shape:  'rect',
-                            label:  'pay'
-                        },
+                        style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
                         createOrder: (data, actions) => {
                             const selectDir = document.getElementById("co-direccion-select");
                             if (selectDir.value === "nueva") {
                                 const dir = document.getElementById('co-direccion').value;
-                                if(!dir) { alert("Rellena la dirección primero."); return actions.reject(); }
+                                const ciudad = document.getElementById('co-ciudad').value;
+                                const cp = document.getElementById('co-cp').value;
+                                if(!dir || !ciudad || !cp) { 
+                                    showModal('error', 'Faltan datos', 'Por favor, rellena todos los campos de la dirección de envío.');
+                                    return actions.reject(); 
+                                }
                             }
-                            
                             return actions.order.create({
-                                purchase_units: [{
-                                    description: "Pedido VerdeGo",
-                                    amount: { value: totalFinal }
-                                }]
+                                purchase_units: [{ description: "Pedido VerdeGo", amount: { value: totalFinalString } }]
                             });
                         },
                         onApprove: (data, actions) => {
                             return actions.order.capture().then(details => {
-                                console.log("Pago OK:", details);
                                 window.cartLogic.confirmarPedidoBackend(details);
                             });
                         },
                         onError: (err) => {
                             console.error(err);
-                            alert("Error en el proceso de pago.");
+                            showModal('error', 'Error PayPal', 'Hubo un problema con el pago.');
                         }
                     }).render('#paypal-checkout-container');
                 } else {
-                    containerPayPal.innerHTML = "<div class='alert alert-danger p-2 small'>No se pudo cargar PayPal. Revisa tu conexión.</div>";
+                    containerPayPal.innerHTML = "<div class='alert alert-danger p-2 small'>Error cargando PayPal.</div>";
                 }
             }, 500);
         }
@@ -304,14 +373,37 @@ window.cartLogic = {
         const selectDir = document.getElementById("co-direccion-select");
         let direccionEnvio, ciudadEnvio, cpEnvio;
 
-        if (selectDir && selectDir.value !== "nueva") {
-            const dirId = parseInt(selectDir.value);
-            const dirObj = estado.direccionesUsuario.find(d => d.idDireccion === dirId);
-            if(dirObj) { direccionEnvio = dirObj.calle; ciudadEnvio = dirObj.ciudad; cpEnvio = dirObj.codigoPostal; }
-        } else {
+        // 4. GUARDADO AUTOMÁTICO DE NUEVA DIRECCIÓN
+        if (selectDir && selectDir.value === "nueva") {
             direccionEnvio = document.getElementById('co-direccion').value;
             ciudadEnvio = document.getElementById('co-ciudad').value;
             cpEnvio = document.getElementById('co-cp').value;
+
+            try {
+                const nuevaDir = {
+                    usuario: { idUsuario: usuario.idUsuario },
+                    alias: "Dirección Pedido", 
+                    calle: direccionEnvio,
+                    ciudad: ciudadEnvio,
+                    codigoPostal: cpEnvio,
+                    pais: "España",
+                    esPrincipal: false
+                };
+                
+                await fetch("http://localhost:8080/VerdeGo_Server/api/direcciones/crear", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nuevaDir)
+                });
+                console.log("Dirección nueva guardada automágicamente");
+            } catch (err) {
+                console.error("Error guardando dirección nueva, pero seguimos con el pedido:", err);
+            }
+
+        } else if (selectDir) {
+            const dirId = parseInt(selectDir.value);
+            const dirObj = estado.direccionesUsuario.find(d => d.idDireccion === dirId);
+            if(dirObj) { direccionEnvio = dirObj.calle; ciudadEnvio = dirObj.ciudad; cpEnvio = dirObj.codigoPostal; }
         }
 
         const subtotal = estado.items.reduce((s, i) => s + (i.price||i.precio)*i.cantidad, 0);
@@ -326,7 +418,7 @@ window.cartLogic = {
                     total: total,
                     puntosUsados: estado.puntosAplicados,
                     codigoDescuento: estado.cuponAplicado?.codigo,
-                    idCodigoDescuento: estado.cuponAplicado?1:null, // Ojo: Aquí deberías poner el ID real si lo tienes en el objeto cupón
+                    idCodigoDescuento: estado.cuponAplicado?1:null, 
                     direccion: direccionEnvio, ciudad: ciudadEnvio, cp: cpEnvio, pais: "España",
                     idTransaccion: detallesPago.id, 
                     estadoPago: "PAGADO",
@@ -337,25 +429,18 @@ window.cartLogic = {
             const data = await res.json();
             
             if(data.status === 'ok') {
-                // <---  ACTUALIZACIÓN DE PUNTOS ---
                 if (data.nuevosPuntos !== undefined) {
-                    console.log("Actualizando puntos locales a:", data.nuevosPuntos);
                     usuario.puntosFidelizacion = data.nuevosPuntos;
-                    // Guardamos el usuario actualizado en el navegador
                     localStorage.setItem("usuarioVerdeGo", JSON.stringify(usuario));
                 }
-                // ---------------------------------------
 
                 bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
                 
                 showModal('success', '¡Pedido Pagado!', `Has ganado puntos con esta compra. Referencia: ${detallesPago.id}`, () => {
-                    // Limpiamos carrito
                     estado.items=[]; 
                     estado.puntosAplicados=0; 
                     estado.cuponAplicado=null; 
                     guardarEstado(); 
-                    
-                    // Redirigimos a perfil para ver los puntos nuevos, o a pedidos
                     window.location.href="/perfil.html"; 
                 });
             } else {
