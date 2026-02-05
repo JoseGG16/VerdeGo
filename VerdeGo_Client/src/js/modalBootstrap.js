@@ -1,5 +1,4 @@
-
-export function showModal(type, title, message, onConfirm, showCancel = false) {
+export function showModal(type, title, message, onConfirm, showCancel = false, buttonCustomText = null) {
     
     if (!window.bootstrap) {
         console.error("ERROR: Bootstrap no cargado");
@@ -15,19 +14,24 @@ export function showModal(type, title, message, onConfirm, showCancel = false) {
     const btnAction = document.getElementById('modal-btn-action');
     const btnCancel = document.getElementById('modal-btn-cancel'); 
 
+    // 1. Textos básicos
     titleEl.textContent = title;
     msgEl.textContent = message;
 
-    if (showCancel) {
+    // 2. Control del botón cancelar (Usando el parámetro showCancel)
+    
+    if (showCancel || onConfirm) {
         btnCancel.classList.remove('d-none');
     } else {
         btnCancel.classList.add('d-none');
     }
 
+    // 3. Reset de estilos base
     iconEl.className = "bi"; 
     iconBgEl.className = "d-inline-flex align-items-center justify-content-center rounded-circle";
     btnAction.className = "btn btn-lg rounded-4 py-3 text-white fw-bold shadow-sm w-100";
 
+    // 4. Configuración según el TIPO
     if (type === 'success') {
         iconEl.classList.add("bi-check-lg", "text-white");
         iconBgEl.style.backgroundColor = "#167a4b"; 
@@ -35,10 +39,18 @@ export function showModal(type, title, message, onConfirm, showCancel = false) {
         btnAction.textContent = "Continuar";
 
     } else if (type === 'logout') {
+        // Estilo ROJO para cerrar sesión
         iconEl.classList.add("bi-box-arrow-right", "text-white");
         iconBgEl.style.backgroundColor = "#dc3545"; 
         btnAction.style.backgroundColor = "#dc3545"; 
-        btnAction.textContent = "Sí, cerrar sesión"; 
+        btnAction.textContent = "Sí, cerrar sesión"; // Texto por defecto para logout
+
+    } else if (type === 'warning') {
+        // Estilo para cancelar pedidos (Icono Amarillo, Botón Rojo)
+        iconEl.classList.add("bi-exclamation-lg", "text-white");
+        iconBgEl.style.backgroundColor = "#ffc107"; // Amarillo de advertencia
+        btnAction.style.backgroundColor = "#dc3545"; // Rojo de peligro
+        btnAction.textContent = "Confirmar";
 
     } else if (type === 'info') {
         iconEl.classList.add("bi-shield-check"); 
@@ -54,6 +66,12 @@ export function showModal(type, title, message, onConfirm, showCancel = false) {
         btnAction.textContent = "Entendido";
     }
 
+    // 5. Sobreescribir texto SOLO si se pasa el 6º parámetro
+    if (buttonCustomText) {
+        btnAction.textContent = buttonCustomText;
+    }
+
+    // 6. Clonar botón para limpiar eventos anteriores
     const newBtn = btnAction.cloneNode(true);
     btnAction.parentNode.replaceChild(newBtn, btnAction);
 
