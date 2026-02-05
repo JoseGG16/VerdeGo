@@ -1,6 +1,8 @@
 package modelo.bean;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Pedido {
 
@@ -8,7 +10,7 @@ public class Pedido {
         PENDIENTE,
         ENVIADO,
         ENTREGADO,
-        CANCELADO
+        CANCELADO, 
     }
 
     private int idPedido;
@@ -18,13 +20,19 @@ public class Pedido {
     private EstadoPedido estado;
     private double total;
     private int puntosUsados;
+    private int puntosGanados;
+    
+    private double descuentoAplicado;
+    private String nombreCupon;
 
     private String dirDireccion;
     private String dirCiudad;
     private String dirCp;
     private String dirPais;
+    private List<DetallePedido> detalles;
 
     public Pedido() {
+        this.detalles = new ArrayList<>();
     }
 
     public Pedido(int idPedido, Cliente cliente, CodigoDescuento codigoDescuento, Date fechaPedido, 
@@ -41,8 +49,20 @@ public class Pedido {
         this.dirCiudad = dirCiudad;
         this.dirCp = dirCp;
         this.dirPais = dirPais;
+        this.detalles = new ArrayList<>(); 
     }
 
+    // --- GETTERS Y SETTERS ---
+
+    public double getDescuentoAplicado() { return descuentoAplicado; }
+    public void setDescuentoAplicado(double descuentoAplicado) { this.descuentoAplicado = descuentoAplicado; }
+
+    public String getNombreCupon() { return nombreCupon; }
+    public void setNombreCupon(String nombreCupon) { this.nombreCupon = nombreCupon; }
+
+    public int getPuntosGanados() { return puntosGanados; }
+    public void setPuntosGanados(int puntosGanados) { this.puntosGanados = puntosGanados; }
+    
     public int getIdPedido() { return idPedido; }
     public void setIdPedido(int idPedido) { this.idPedido = idPedido; }
 
@@ -76,9 +96,12 @@ public class Pedido {
     public String getDirPais() { return dirPais; }
     public void setDirPais(String dirPais) { this.dirPais = dirPais; }
 
+    public List<DetallePedido> getDetalles() { return detalles; }
+    public void setDetalles(List<DetallePedido> detalles) { this.detalles = detalles; }
+
     @Override
     public String toString() {
         return "Pedido [idPedido=" + idPedido + ", cliente=" + (cliente != null ? cliente.getNombre() : "null") 
-                + ", estado=" + estado + ", total=" + total + "]";
+                + ", estado=" + estado + ", total=" + total + ", numProductos=" + (detalles != null ? detalles.size() : 0) + "]";
     }
 }
