@@ -12,8 +12,19 @@
   --font-weight-medium: 500;
 }
 
+
+/* =========================================
+   FIX FOOTER (Sticky Footer)
+   ========================================= */
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#main-footer {
+    margin-top: auto;
 }
 
 /* =========================================
@@ -311,9 +322,9 @@ input[type="text"].is-invalid {
 
 /* Hacemos la lista mucho más alta para que quepan más productos */
 #co-lista-resumen {
-    max-height: 400px !important; /* Antes era 150px */
+    max-height: 400px !important; 
     overflow-y: auto;
-    background-color: #fff !important; /* Fondo blanco para limpieza */
+    background-color: #fff !important; 
     border: 1px solid #e5e7eb;
 }
 
@@ -336,7 +347,7 @@ input[type="text"].is-invalid {
 
 /* Imagen del producto en el checkout */
 .checkout-img {
-    width: 64px;  /* Más grande */
+    width: 64px; 
     height: 64px;
     border-radius: 8px;
     object-fit: cover;
@@ -370,4 +381,58 @@ input[type="text"].is-invalid {
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--verdego-medium);
+}
+
+/* =========================================
+   11. ESTILOS MIS PEDIDOS
+   ========================================= */
+
+.order-card {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem; 
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: var(--verdego-medium);
+}
+
+/* Badges de estado personalizados */
+.badge-status {
+    padding: 0.5rem 1rem;
+    border-radius: 50rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-pendiente { background-color: #fff3cd; color: #856404; }
+.status-preparando { background-color: #cff4fc; color: #055160; }
+.status-enviado { background-color: #e0cffc; color: #4c0bce; }
+.status-entregado { background-color: #d1e7dd; color: #0f5132; }
+.status-cancelado { background-color: #f8d7da; color: #842029; }
+
+/* Botón ver detalles */
+.btn-toggle-details {
+    background-color: var(--verdego-medium);
+    color: white;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1.5rem;
+    transition: background 0.2s;
+}
+.btn-toggle-details:hover {
+    background-color: var(--verdego-dark);
+    color: white;
+}
+
+/* Sección de detalles (fondo grisaceo) */
+.order-details-bg {
+    background-color: #f8f9fa;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
 }
